@@ -1,0 +1,5 @@
+#properties to load
+artifactory.username=admin
+artifactory.password=password
+artifactory.baseurl=http://localhost:8081/artifactory/api/search/aql
+elasticsearch.baseurl=http://localhost:9200/aql/item
