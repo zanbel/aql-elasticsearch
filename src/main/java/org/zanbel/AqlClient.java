@@ -1,7 +1,5 @@
 package org.zanbel;
 
-import org.json.JSONArray;
-
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
@@ -16,8 +14,10 @@ public class AqlClient {
 
     public AqlClient(String aqlRequestString){
         globalConfig = loadConfig(System.getProperty("user.dir") + "\\config\\properties");
-        if(globalConfig == null)
+        if(globalConfig == null) {
+            System.out.println("Unable to run load config file, exiting");
             System.exit(1);
+        }
         request = new AqlRequest(aqlRequestString);
         elesConnector = new ElesticsearchConnector();
     }
@@ -34,10 +34,15 @@ public class AqlClient {
     {
         String aqlRequestString = (args.length == 0) ? "getAllItems" : args[0];
         AqlClient client = new AqlClient(aqlRequestString);
-        client.run();
+        try {
+            client.run();
+        }
+        catch (Exception e){
+            System.out.println("Unable to run client " + e.toString());
+        }
     }
 
-    public void run(){
+    public void run() {
 /**this section should be uncommented in case you wish to add manipulations, or extract additional fields before indexing
  * TODO:
  * add manipulation to create repo items in AQL index and map fields, e.g. total size, num of artifact, type, path, etc...
@@ -45,8 +50,8 @@ public class AqlClient {
  *        List<org.zanbel.AqlItem> aqlItems = request.getAqlItems();
  *        elesConnector.indexResultsFromAqlItems(aqlItems);
 **/
-        JSONArray aqlItems = request.getAqlObjArray();
-        elesConnector.indexResultsFromJsonArray(aqlItems);
+
+        elesConnector.indexResultsFromJsonArray(request.getAqlObjArray());
     }
 
     private Properties loadConfig(String pathToFile){
